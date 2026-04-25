@@ -1,0 +1,37 @@
+{
+  "name": "Webhook → Telegram alert",
+  "nodes": [
+    {
+      "id": "hook",
+      "name": "Incoming Webhook",
+      "type": "flowforge.webhookTrigger",
+      "position": { "x": 100, "y": 200 },
+      "parameters": { "path": "alerts", "method": "POST" }
+    },
+    {
+      "id": "format",
+      "name": "Build message",
+      "type": "flowforge.set",
+      "position": { "x": 360, "y": 200 },
+      "parameters": {
+        "fields": {
+          "text": "🚨 New alert: {{ $json.body.title }} — {{ $json.body.message }}"
+        }
+      }
+    },
+    {
+      "id": "telegram",
+      "name": "Send to Telegram",
+      "type": "flowforge.telegram",
+      "position": { "x": 620, "y": 200 },
+      "parameters": {
+        "chatId": "YOUR_CHAT_ID",
+        "text": "={{ $json.text }}"
+      }
+    }
+  ],
+  "connections": [
+    { "source": "hook", "target": "format" },
+    { "source": "format", "target": "telegram" }
+  ]
+}
