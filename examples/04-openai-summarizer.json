@@ -1,0 +1,39 @@
+{
+  "name": "Webhook → OpenAI summarizer",
+  "nodes": [
+    {
+      "id": "hook",
+      "name": "Receive text",
+      "type": "flowforge.webhookTrigger",
+      "position": { "x": 100, "y": 200 },
+      "parameters": { "path": "summarize", "method": "POST", "responseMode": "lastNode" }
+    },
+    {
+      "id": "ai",
+      "name": "Summarize with OpenAI",
+      "type": "flowforge.openai",
+      "position": { "x": 380, "y": 200 },
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "systemPrompt": "You are a concise summarizer. Reply in 1-2 sentences.",
+        "userPrompt": "={{ $json.body.text }}"
+      }
+    },
+    {
+      "id": "shape",
+      "name": "Reply payload",
+      "type": "flowforge.set",
+      "position": { "x": 660, "y": 200 },
+      "parameters": {
+        "fields": {
+          "summary": "={{ $json.content }}"
+        },
+        "keepOnlySet": true
+      }
+    }
+  ],
+  "connections": [
+    { "source": "hook", "target": "ai" },
+    { "source": "ai", "target": "shape" }
+  ]
+}

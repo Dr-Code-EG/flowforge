@@ -1,0 +1,24 @@
+{
+  "name": "flowforge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "FlowForge - Self-hosted visual workflow automation platform (n8n-like)",
+  "license": "MIT",
+  "scripts": {
+    "dev:backend": "pnpm --filter @flowforge/backend dev",
+    "dev:frontend": "pnpm --filter @flowforge/frontend dev",
+    "build": "pnpm --filter @flowforge/shared build && pnpm --filter @flowforge/frontend build && pnpm --filter @flowforge/backend build",
+    "start": "node packages/backend/dist/main.js",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:build": "docker compose build"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.15.1"
+}

@@ -1,0 +1,37 @@
+{
+  "name": "HTTP → Slack notification",
+  "nodes": [
+    {
+      "id": "schedule",
+      "name": "Every 5 min",
+      "type": "flowforge.scheduleTrigger",
+      "position": { "x": 100, "y": 200 },
+      "parameters": { "cron": "*/5 * * * *" }
+    },
+    {
+      "id": "fetch",
+      "name": "Get JSON Placeholder",
+      "type": "flowforge.http",
+      "position": { "x": 350, "y": 200 },
+      "parameters": {
+        "method": "GET",
+        "url": "https://jsonplaceholder.typicode.com/todos/1"
+      }
+    },
+    {
+      "id": "notify",
+      "name": "Notify Slack",
+      "type": "flowforge.slack",
+      "position": { "x": 600, "y": 200 },
+      "parameters": {
+        "mode": "webhook",
+        "webhookUrl": "https://hooks.slack.com/services/REPLACE/ME",
+        "text": "Heartbeat OK: {{ $json.body.title }}"
+      }
+    }
+  ],
+  "connections": [
+    { "source": "schedule", "target": "fetch" },
+    { "source": "fetch", "target": "notify" }
+  ]
+}

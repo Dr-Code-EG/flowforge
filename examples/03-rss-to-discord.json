@@ -1,0 +1,36 @@
+{
+  "name": "RSS → Discord",
+  "nodes": [
+    {
+      "id": "schedule",
+      "name": "Every hour",
+      "type": "flowforge.scheduleTrigger",
+      "position": { "x": 100, "y": 200 },
+      "parameters": { "cron": "0 * * * *" }
+    },
+    {
+      "id": "rss",
+      "name": "Fetch feed",
+      "type": "flowforge.rss",
+      "position": { "x": 360, "y": 200 },
+      "parameters": {
+        "url": "https://hnrss.org/frontpage",
+        "limit": 5
+      }
+    },
+    {
+      "id": "discord",
+      "name": "Post to Discord",
+      "type": "flowforge.discord",
+      "position": { "x": 620, "y": 200 },
+      "parameters": {
+        "webhookUrl": "https://discord.com/api/webhooks/REPLACE/ME",
+        "content": "📰 {{ $json.title }}\n{{ $json.link }}"
+      }
+    }
+  ],
+  "connections": [
+    { "source": "schedule", "target": "rss" },
+    { "source": "rss", "target": "discord" }
+  ]
+}

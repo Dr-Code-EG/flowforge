@@ -1,0 +1,54 @@
+services:
+  flowforge:
+    build: .
+    image: flowforge:latest
+    ports:
+      - "3000:3000"
+    environment:
+      # Use Postgres in this compose stack; comment out to fall back to SQLite
+      DATABASE_TYPE: postgres
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: flowforge
+      DATABASE_PASSWORD: flowforge_dev_password
+      DATABASE_NAME: flowforge
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      EXECUTION_MODE: regular
+      JWT_SECRET: ${JWT_SECRET:-change-me-please-use-a-long-random-string-min-64-chars}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost:3000}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - flowforge_data:/app/packages/backend/data
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: flowforge
+      POSTGRES_PASSWORD: flowforge_dev_password
+      POSTGRES_DB: flowforge
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U flowforge"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redisdata:/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  redisdata:
+  flowforge_data:
